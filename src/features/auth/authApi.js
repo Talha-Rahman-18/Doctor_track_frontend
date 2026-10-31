@@ -6,6 +6,7 @@ const toUser = (apiUser) => ({
   name: apiUser.name,
   email: apiUser.email,
   role: apiUser.role,
+  token: apiUser.token,
 });
 
 export const authApi = baseApi.injectEndpoints({
@@ -15,8 +16,13 @@ export const authApi = baseApi.injectEndpoints({
       transformResponse: (response) => toUser(response.data.user),
       providesTags: ["Me"],
     }),
+
     login: build.mutation({
-      query: (credentials) => ({ url: "/auth/login", method: "POST", data: credentials }),
+      query: (credentials) => ({
+        url: "/auth/login",
+        method: "POST",
+        data: credentials,
+      }),
       transformResponse: (response) => toUser(response.data.user),
       async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
         try {
@@ -29,6 +35,7 @@ export const authApi = baseApi.injectEndpoints({
         }
       },
     }),
+
     logout: build.mutation({
       query: () => ({ url: "/auth/logout", method: "POST" }),
       async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
